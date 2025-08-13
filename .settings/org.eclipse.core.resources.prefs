@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+encoding//dev-memo/db/create_database.sql=MS932
+encoding//dev-memo/db/insert_recs.sql=MS932
+encoding//dev-memo/db/jbasicdaodb.ddl=utf-8
+encoding/<project>=UTF-8
