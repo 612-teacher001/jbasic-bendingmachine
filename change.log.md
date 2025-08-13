@@ -1,0 +1,3 @@
+# 変更履歴
+
+- ver.0.00 MSL00 2025-08-14 Thu. プロジェクト配布版（[リリースノート](./release_notes/release_note_ver_0.00.md)）
