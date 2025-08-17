@@ -76,16 +76,40 @@ public class Product implements Serializable {
 		this.quantity = quantity;
 	}
 
+	/**
+	 * シリアライズ化文字列を取得する
+	 */
 	@Override
 	public String toString() {
+		return toSerialized(true);
+	}
+
+	/**
+	 * 比較用シリアライズ化文字列を取得する
+	 * @return
+	 */
+	public String toStringCompare() {
+		return toSerialized(false);
+	}
+
+	/**
+	 * シリアライズ化文字列を取得する
+	 * @param forFullCompare すべてのフィールド値を対象とする場合はtrue、idフィールドを除く場合はfalse
+	 * @return シリアライズ化文字列
+	 */
+	private String toSerialized(boolean forFullCompare) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Product [");
-		builder.append("id=" + id + ", ");
+		if (forFullCompare) {
+			builder.append("id=" + id + ", ");
+		}
 		builder.append("name=" + name + ", ");
 		builder.append("price=" + price + ", ");
 		builder.append("quantity=" + quantity);
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	
 	
 }
