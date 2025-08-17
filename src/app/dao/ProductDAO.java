@@ -21,6 +21,12 @@ public class ProductDAO {
 	private static final String DB_USER = "student";
 	private static final String DB_PASSWORD = "himitu";
 	
+	// SQL文字列定数群
+	private static final String SQL_FIND_ALL = "SELECT * FROM products ORDER BY id";
+	
+	/**
+	 * フィールド：データベース接続オブジェクト
+	 */
 	private Connection conn;
 	
 	/**
@@ -60,13 +66,15 @@ public class ProductDAO {
 	public List<Product> findAll() {
 		
 		// 1. 実行するSQLの設定
-		String sql = "SELECT * FROM products ORDER BY id";
+		// String sql = "SELECT * FROM products ORDER BY id";
 		try (// 2. SQL実行オブジェクトを取得
-			 PreparedStatement pstmt = this.conn.prepareStatement(sql);
+			 PreparedStatement pstmt = this.conn.prepareStatement(SQL_FIND_ALL);
 			 // 3. SQLの実行と結果セットの取得
 			 ResultSet rs = pstmt.executeQuery();
 			) {
 			// 4. 結果セットから商品リストへの詰替え
+			List<Product> list = this.convertToLList(rs);
+			/*
 			List<Product> list = new ArrayList<Product>();
 			while (rs.next()) {
 				Product bean = new Product();
@@ -76,6 +84,7 @@ public class ProductDAO {
 				bean.setQuantity(rs.getInt("quantity"));
 				list.add(bean);
 			}
+			*/
 			// 5. 商品リストの返却
 			return list;
 		} catch (SQLException e) {
@@ -84,6 +93,26 @@ public class ProductDAO {
 			return null;
 		}
 		
+	}
+
+	/**
+	 * 結果セットから商品インスタンスのリストにマッピングする
+	 * （結果セットから商品インスタンスのリストに変換する）
+	 * @param rs 結果セット
+	 * @return 商品リスト
+	 * @throws SQLException
+	 */
+	private List<Product> convertToLList(ResultSet rs) throws SQLException {
+		List<Product> list = new ArrayList<Product>();
+		while (rs.next()) {
+			Product bean = new Product();
+			bean.setId(rs.getInt("id"));
+			bean.setName(rs.getString("name"));
+			bean.setPrice(rs.getInt("price"));
+			bean.setQuantity(rs.getInt("quantity"));
+			list.add(bean);
+		}
+		return list;
 	}
 	
 	
