@@ -23,6 +23,7 @@ public class ProductDAO {
 	
 	// SQL文字列定数群
 	private static final String SQL_FIND_ALL = "SELECT * FROM products ORDER BY id";
+	private static final String SQL_FIND_BY_ID = "SELECT * FROM products WHERE id = ?";
 	
 	/**
 	 * フィールド：データベース接続オブジェクト
@@ -51,7 +52,7 @@ public class ProductDAO {
 	/**
 	 * データベース接続オブジェクトを解放する
 	 */
-	private void close() {
+	public void close() {
 		try {
 			if (this.conn != null) this.conn.close();
 		} catch (SQLException e) {
@@ -60,32 +61,48 @@ public class ProductDAO {
 	}
 
 	/**
+	 * 指定された商品IDの商品を取得する
+	 * @param id 取得する商品の商品ID
+	 * @return 商品IDに合致する商品がある場合は商品インスタンス、それ以外はnull
+	 */
+	public Product findById(int id) {
+		
+		try (// 1. SQL実行オブジェクトを取得
+			 PreparedStatement pstmt = this.conn.prepareStatement(SQL_FIND_BY_ID);) {
+			// 2. プレースホルダをパラメータで置換
+			pstmt.setInt(1, id);
+			try (// 3. SQLの実行と結果セットの取得
+				 ResultSet rs = pstmt.executeQuery();) {
+				// 4. 結果セットから商品インスタンスに変換
+				List<Product> list = this.convertToList(rs);
+				Product bean = null;
+				if (list.size() > 0) {
+					bean = list.get(0);
+				}
+				// 5. 商品インスタンスを返却
+				return bean;
+			}
+		} catch (SQLException e) {
+			Display.showMessageln("レコード取得時にエラーが発生しました。");
+			System.exit(0);
+			return null;
+		}
+	}
+	
+	/**
 	 * すべての商品を取得する
 	 * @return 商品リスト
 	 */
 	public List<Product> findAll() {
 		
-		// 1. 実行するSQLの設定
-		// String sql = "SELECT * FROM products ORDER BY id";
-		try (// 2. SQL実行オブジェクトを取得
+		try (// 1. SQL実行オブジェクトを取得
 			 PreparedStatement pstmt = this.conn.prepareStatement(SQL_FIND_ALL);
-			 // 3. SQLの実行と結果セットの取得
+			 // 2. SQLの実行と結果セットの取得
 			 ResultSet rs = pstmt.executeQuery();
 			) {
-			// 4. 結果セットから商品リストへの詰替え
-			List<Product> list = this.convertToLList(rs);
-			/*
-			List<Product> list = new ArrayList<Product>();
-			while (rs.next()) {
-				Product bean = new Product();
-				bean.setId(rs.getInt("id"));
-				bean.setName(rs.getString("name"));
-				bean.setPrice(rs.getInt("price"));
-				bean.setQuantity(rs.getInt("quantity"));
-				list.add(bean);
-			}
-			*/
-			// 5. 商品リストの返却
+			// 3. 結果セットから商品リストへの詰替え
+			List<Product> list = this.convertToList(rs);
+			// 4. 商品リストの返却
 			return list;
 		} catch (SQLException e) {
 			Display.showMessageln("レコード取得時にエラーが発生しました。");
@@ -102,7 +119,7 @@ public class ProductDAO {
 	 * @return 商品リスト
 	 * @throws SQLException
 	 */
-	private List<Product> convertToLList(ResultSet rs) throws SQLException {
+	private List<Product> convertToList(ResultSet rs) throws SQLException {
 		List<Product> list = new ArrayList<Product>();
 		while (rs.next()) {
 			Product bean = new Product();
@@ -114,7 +131,5 @@ public class ProductDAO {
 		}
 		return list;
 	}
-	
-	
-	
+
 }
