@@ -40,7 +40,51 @@ class ProductDaoTest {
 	}
 
 	@Nested
-	@DisplayName("productDAO#finndById(int)メソッドのテストクラス")
+	@DisplayName("ProductDAO#findByName(String)メソッドのテストクラス")
+	class FindByNameTest {
+		@ParameterizedTest
+		@MethodSource("dataProvider")
+		@DisplayName("Test31: 商品名に指定されたキーワードが含まれている商品を取得できる")
+		void test31(String targetWord, List<Product> expectedList) {
+			// execute
+			
+			List<Product> actualList = sut.findByName(targetWord);
+			// verify
+			for (int i = 0; i < actualList.size(); i++) {
+				Product actual = actualList.get(i);
+				Product expected = expectedList.get(i);
+				assertEquals(expected.toStringCompare(), actual.toStringCompare());
+			}
+		}
+		
+		static Stream<Arguments> dataProvider() {
+			// setup
+			List<String> target = new ArrayList<String>();
+			List<Product> products = null;
+			List<List<Product>> expected = new ArrayList<List<Product>>();
+			
+			// Test31: キーワード「コーラ」で「ゴカコーラ」を取得できる
+			target.add("コーラ");
+			products = new ArrayList<Product>();
+			products.add(new Product("ゴカコーラ", 160, 6));
+			expected.add(products);
+			// Test32: キーワード「エリア」で「アグエリアス」を取得できる
+			target.add("エリア");
+			products = new ArrayList<Product>();
+			products.add(new Product("アグエリアス", 150, 10));
+			expected.add(products);
+			
+			// テストパラメータの返却
+			int count = target.size();
+			return Stream.of(
+						  Arguments.of(target.get(0), expected.get(0))
+						, Arguments.of(target.get(count - 1), expected.get(count - 1))
+					);
+		}
+	}
+	
+	@Nested
+	@DisplayName("ProductDAO#findById(int)メソッドのテストクラス")
 	class FindByIdTest {
 		@Test
 		@DisplayName("Test22: 登録されていない商品IDを指定するとnullが返る")

@@ -24,6 +24,7 @@ public class ProductDAO {
 	// SQL文字列定数群
 	private static final String SQL_FIND_ALL = "SELECT * FROM products ORDER BY id";
 	private static final String SQL_FIND_BY_ID = "SELECT * FROM products WHERE id = ?";
+	private static final String SQL_FIND_BY_NAME = "SELECT * FROM products WHERE name LIKE ?";
 	
 	/**
 	 * フィールド：データベース接続オブジェクト
@@ -57,6 +58,26 @@ public class ProductDAO {
 			if (this.conn != null) this.conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public List<Product> findByName(String keyword) {
+		
+		try (// 1. SQL実行オブジェクトを取得
+			 PreparedStatement pstmt = this.conn.prepareStatement(SQL_FIND_BY_NAME);) {
+			// 2. プレースホルダをパラメータで置換
+			pstmt.setString(1, "%" + keyword + "%"); // ワイルドカードはこのタイミングで追加
+			try (// 3. SQLの実行と結果セットの取得
+				 ResultSet rs = pstmt.executeQuery();) {
+				// 4. 結果セットから商品リストへの詰替え
+				List<Product> list = this.convertToList(rs);
+				// 5. 商品リストを返却
+				return list;
+			}
+		} catch (SQLException e) {
+			Display.showMessageln("レコード取得時にエラーが発生しました。");
+			System.exit(0);
+			return null;
 		}
 	}
 
