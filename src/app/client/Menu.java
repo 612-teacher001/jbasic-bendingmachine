@@ -44,6 +44,7 @@ public class Menu {
 		switch (index) {
 		case INDEX_PURCHASE: // 商品購入の場合
 			PurchaseService service = new PurchaseService();
+			service.execute();
 			return true;
 		case INDEX_QUIT: // 終了の場合
 		default: // 未定義のインデックスの場合

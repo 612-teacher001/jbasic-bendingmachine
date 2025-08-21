@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,77 @@ class ProductDaoTest {
 		// テスト対象クラスの解放
 		sut.close();
 	}
+	
+	@Nested
+	@DisplayName("ProductDAO#save(Product)メソッドのテストクラス")
+	class SaveTest {
+		/** テスト補助変数 */
+		List<Product> expectedList = new ArrayList<Product>();
+		
+		@ParameterizedTest
+		@MethodSource("dataProvider42")
+		@DisplayName("Test42:【レコード更新のテスト】")
+		void test42(Product target, List<Product> expectedList) {
+			// execute
+			sut.save(target);
+			List<Product> actualList = sut.findAll();
+			// verify
+			for (int i = 0; i < actualList.size(); i++) {
+				Product actual = actualList.get(i);
+				Product expected = expectedList.get(i);
+				assertEquals(expected.toStringCompare(), actual.toStringCompare());
+			}
+		}
+		
+		static Stream<Arguments> dataProvider42() {
+			// setup
+			List<Product> target = new ArrayList<Product>();
+			List<Product> expectedList = new ArrayList<Product>();
+			List<List<Product>> expected = new ArrayList<List<Product>>();
+			
+			// Test42.1: 商品ID「1」の商品名を「ペプシコ」に更新できる
+			expectedList = new ArrayList<Product>();
+			target.add(new Product(1, "ペプシコ", 160, 6));
+			expectedList.add(new Product("ペプシコ", 160, 6));
+			expectedList.add(new Product("アグエリアス", 150, 10));
+			expectedList.add(new Product("こーいお茶", 120, 9));
+			expectedList.add(new Product("ボズ", 120, 0));
+			expected.add(expectedList);
+			
+			// Test42.2: 商品ID「2」の価格を「170」に更新できる
+			expectedList = new ArrayList<Product>();
+			target.add(new Product(2, "アグエリアス", 170, 10));
+			expectedList.add(new Product("ゴカコーラ", 160, 6));
+			expectedList.add(new Product("アグエリアス", 170, 10));
+			expectedList.add(new Product("こーいお茶", 120, 9));
+			expectedList.add(new Product("ボズ", 120, 0));
+			expected.add(expectedList);
+			
+			// Test42.3: 商品ID「3」の価格を「170」数量を「12」に更新できる
+			expectedList = new ArrayList<Product>();
+			target.add(new Product(3, "こーいお茶", 170, 12));
+			expectedList.add(new Product("ゴカコーラ", 160, 6));
+			expectedList.add(new Product("アグエリアス", 150, 10));
+			expectedList.add(new Product("こーいお茶", 170, 12));
+			expectedList.add(new Product("ボズ", 120, 0));
+			expected.add(expectedList);
+			
+			// テストパラメータの返却
+			int count = target.size();
+			return Stream.of(
+					  Arguments.of(target.get(0), expected.get(0))
+					, Arguments.of(target.get(1), expected.get(1))
+					, Arguments.of(target.get(count - 1), expected.get(count - 1))
+				);
+		}
+		
+		@Test
+		@Disabled
+		@DisplayName("Test41:【レコード新規登録のテスト】")
+		void test41() {
+			
+		}
+	}
 
 	@Nested
 	@DisplayName("ProductDAO#findByName(String)メソッドのテストクラス")
@@ -47,7 +119,6 @@ class ProductDaoTest {
 		@DisplayName("Test31: 商品名に指定されたキーワードが含まれている商品を取得できる")
 		void test31(String targetWord, List<Product> expectedList) {
 			// execute
-			
 			List<Product> actualList = sut.findByName(targetWord);
 			// verify
 			for (int i = 0; i < actualList.size(); i++) {
