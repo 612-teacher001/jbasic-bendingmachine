@@ -43,33 +43,32 @@ public class ProductValidator {
 	 * @return 残高が商品の価格以上である場合はtrue、それ以外はfalse
 	 */
 	public boolean isInsufficientCharge() {
-		return (this.charge >= this.product.getPrice());
+		return (this.charge < this.product.getPrice());
 	}
 
 	/**
-	 * 妥当性検査を実行する
+	 * 商品の妥当性を検証する
 	 * @return エラーメッセージ
 	 */
-	public String execute() {
+	public String check() {
 		
-		String errorMessage = "";
+		String errorMessage;
 		
-		// 4-2. 商品が存在しない場合 → 誤ったIDを入力したケース。これ以上進められないので終了
 		if (this.isNotFound()) {
+			// 1. 商品が存在しない場合 → 誤ったIDを入力したケース。これ以上進められないので終了
 			errorMessage = "該当する商品がありません。";
-		}
-		
-		// 4-3. 在庫切れの場合 → 数量が0なので購入不可能
-		if (this.isSoldout()) {
+		} else if (this.isSoldout()) {
+			// 2. 在庫切れの場合 → 数量が0なので購入不可能
 			errorMessage = "売り切れです。購入できません。";
-		}
-		
-		// 4-4. 残金不足の場合 → 購入金額より少ないので処理を進められない
-		if (this.isInsufficientCharge()) {
+		} else if (this.isInsufficientCharge()) {
+			// 3. 残金不足の場合 → 購入金額より少ないので処理を進められない
 			errorMessage = "お金が足りません。購入できません。";
+		} else {
+			errorMessage = "";
 		}
 		
 		return errorMessage;
+
 	}
 
 }
