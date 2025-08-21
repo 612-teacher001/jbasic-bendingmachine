@@ -39,25 +39,29 @@ public class PurchaseService {
 			int id = Keyboard.getInputNumber("購入する商品IDを入力してください。-> ");
 			Product product = dao.findById(id);
 			
-			// 4-2. 商品が存在しない場合 → 誤ったIDを入力したケース。これ以上進められないので終了
-			if (product == null) {
+			// 4-2. 商品インスタンスの妥当性検証
+			ProductValidator validator = new ProductValidator(product, charge);
+			
+			
+			// 4-3. 商品が存在しない場合 → 誤ったIDを入力したケース。これ以上進められないので終了
+			if (validator.isNotFound()) {
 				Display.showMessageln("該当する商品がありません。");
 				return;
 			}
 
-			// 4-3. 在庫切れの場合 → 数量が0なので購入不可能
-			if (product.getQuantity() == 0) {
+			// 4-4. 在庫切れの場合 → 数量が0なので購入不可能
+			if (validator.isSoldout()) {
 				Display.showMessageln("売り切れです。購入できません。");
 				return;
 			}
 
-			// 4-4. 残金不足の場合 → 購入金額より少ないので処理を進められない
-			if (charge < product.getPrice()) {
+			// 4-5. 残金不足の場合 → 購入金額より少ないので処理を進められない
+			if (validator.isInsufficientCharge()) {
 				Display.showMessageln("お金が足りません。購入できません。");
 				return;
 			}
 			
-			// 4-5. 購入処理を実行する → 残金を減らし、在庫を1つ減らしてDBに保存する
+			// 4-6. 購入処理を実行する → 残金を減らし、在庫を1つ減らしてDBに保存する
 			charge -= product.getPrice();
 			int quantity = product.getQuantity() - 1;
 			product.setQuantity(quantity);
