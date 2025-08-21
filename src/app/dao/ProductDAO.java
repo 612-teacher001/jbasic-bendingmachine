@@ -29,6 +29,7 @@ public class ProductDAO {
     private static final String SQL_FIND_ALL = "SELECT id, name, price, quantity FROM products ORDER BY id";
     private static final String SQL_FIND_BY_ID = "SELECT id, name, price, quantity FROM products WHERE id = ?";
     private static final String SQL_FIND_BY_NAME = "SELECT id, name, price, quantity FROM products WHERE name LIKE ?";
+    private static final String SQL_UPDATE = "UPDATE products SET name = ?, price = ?, quantity = ? WHERE id = ?";
 
     // -----------------------------
     // フィールド
@@ -66,9 +67,25 @@ public class ProductDAO {
     }
 
     // -----------------------------
+    // 商品追加メソッド
+    // -----------------------------
+    
+	public void save(Product product) {
+		try (PreparedStatement pstmt = this.conn.prepareStatement(SQL_UPDATE);) {
+			pstmt.setString(1, product.getName());
+			pstmt.setInt(2, product.getPrice());
+			pstmt.setInt(3, product.getQuantity());
+			pstmt.setInt(4, product.getId());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+            Display.showMessageln("レコード挿入時にエラーが発生しました。");
+		}
+	}
+    
+    // -----------------------------
     // 商品取得メソッド
     // -----------------------------
-
+    
     /**
      * すべての商品を取得する
      * @return 商品リスト
@@ -133,7 +150,7 @@ public class ProductDAO {
             return null;
         }
     }
-
+    
     // -----------------------------
     // ResultSet 変換メソッド
     // -----------------------------
@@ -186,4 +203,5 @@ public class ProductDAO {
         bean.setPrice(rs.getInt("price"));
         bean.setQuantity(rs.getInt("quantity"));
     }
+
 }
