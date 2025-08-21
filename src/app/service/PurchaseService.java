@@ -25,16 +25,7 @@ public class PurchaseService {
 			// 2-2. 商品一覧を取得して表示 → ユーザがどの商品を買えるか判断できるようにする
 			ProductDAO dao = new ProductDAO();
 			List<Product> list = dao.findAll();
-			
-			System.out.printf("%-6s  %-10s  %-6s  %-3s\n", "商品ID", "商品名", "価格", "数量");
-			for (Product bean : list) {
-				System.out.printf("%-6s  %-10s  %-6s  %-3s\n", 
-									FixedLengthGenerator.execute(bean.getId(), 6), 
-									FixedLengthGenerator.execute(bean.getName(), 10),
-									FixedLengthGenerator.execute(bean.getPrice(), 6), 
-									FixedLengthGenerator.execute(bean.getQuantity(), 3) 
-								);
-			}
+			showProducts(list);
 			
 			// 3. 購入を続けるかどうかを確認 → ユーザが購入をやめたい場合はここで終了できるようにする
 			String input = Keyboard.getInputString("商品購入手続きを行いますか？（y/n）-> ");
@@ -77,15 +68,41 @@ public class PurchaseService {
 			
 			// 4-7. 購入商品の表示
 			Display.showMessageln("■ 購入した商品");
-			System.out.printf("%-6s  %-10s  %-6s\n", "商品ID", "商品名", "価格");
-			System.out.printf("%-6s  %-10s  %-6s\n\n", 
-								FixedLengthGenerator.execute(product.getId(), 6), 
-								FixedLengthGenerator.execute(product.getName(), 10),
-								FixedLengthGenerator.execute(product.getPrice(), 6)
-							);
+			showProduct(product);
 
 		} while (charge > 0); 
 		// 5. 残金が0円になるまでは繰り返す → お金がなくなると購入を続けられないのでループ終了
+		
+	}
+
+	/**
+	 * 商品リストを表示する
+	 * @param list 商品リスト
+	 */
+	private void showProducts(List<Product> list) {
+		System.out.printf("%-6s  %-10s  %-6s  %-3s\n", "商品ID", "商品名", "価格", "数量");
+		for (Product bean : list) {
+			System.out.printf("%-6s  %-10s  %-6s  %-3s\n", 
+								FixedLengthGenerator.execute(bean.getId(), 6), 
+								FixedLengthGenerator.execute(bean.getName(), 10),
+								FixedLengthGenerator.execute(bean.getPrice(), 6), 
+								FixedLengthGenerator.execute(bean.getQuantity(), 3) 
+							);
+		}
+		
+	}
+
+	/**
+	 * 商品インスタンスを表示する
+	 * @param product 表示する商品インスタンス
+	 */
+	private void showProduct(Product product) {
+		System.out.printf("%-6s  %-10s  %-6s\n", "商品ID", "商品名", "価格");
+		System.out.printf("%-6s  %-10s  %-6s\n\n", 
+							FixedLengthGenerator.execute(product.getId(), 6), 
+							FixedLengthGenerator.execute(product.getName(), 10),
+							FixedLengthGenerator.execute(product.getPrice(), 6)
+						);
 		
 	}
 
