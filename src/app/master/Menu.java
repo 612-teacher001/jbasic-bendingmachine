@@ -54,6 +54,7 @@ public class Menu {
 			break;
 		case INDEX_EDIT:
 			ProductEditService productEditService = new ProductEditService();
+			productEditService.execute();
 			isRunning = true;
 			break;
 		case INDEX_DELETE:
