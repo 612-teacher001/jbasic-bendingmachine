@@ -1,5 +1,6 @@
 # 変更履歴
 
+- ver.0.21 MSL21 2025-08-22 Fri. 課題2-1の実装（[リリースノート](./release_notes/release_note_ver_0.21.md)）
 - ver.0.20 MSL20 2025-08-22 Fri. 課題2実施準備版（[リリースノート](./release_notes/release_note_ver_0.20.md)）
 - ver.0.15 MSL15 2025-08-22 Fri. 課題1-5の実施（[リリースノート](./release_notes/release_note_ver_0.15.md)）
 - ver.0.14 MSL14 2025-08-18 Mon. 課題1-4の実施（[リリースノート](./release_notes/release_note_ver_0.14.md)）
