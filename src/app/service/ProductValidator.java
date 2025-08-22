@@ -12,7 +12,7 @@ public class ProductValidator {
 
 	/**
 	 * コンストラクタ
-	 * @param product 検査大砲商品インスタンス
+	 * @param product 検査対象商品インスタンス
 	 * @param charge  残額
 	 */
 	public ProductValidator(Product product, int charge) {
