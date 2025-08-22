@@ -44,18 +44,22 @@ public class Menu {
 		switch (index) {
 		case INDEX_LIST:
 			ProductListService productListService = new ProductListService();
+			productListService.execute();
 			isRunning = true;
 			break;
 		case INDEX_REGIST:
 			ProductRegistService productRegistService = new ProductRegistService();
+			productRegistService.execute();
 			isRunning = true;
 			break;
 		case INDEX_EDIT:
 			ProductEditService productEditService = new ProductEditService();
+			productEditService.execute();
 			isRunning = true;
 			break;
 		case INDEX_DELETE:
 			ProductDeleteService productDeleteService = new ProductDeleteService();
+			productDeleteService.execute();
 			isRunning = true;
 			break;
 		default:
