@@ -44,6 +44,7 @@ public class Menu {
 		switch (index) {
 		case INDEX_LIST:
 			ProductListService productListService = new ProductListService();
+			productListService.execute();
 			isRunning = true;
 			break;
 		case INDEX_REGIST:
