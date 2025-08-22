@@ -30,6 +30,8 @@ public class ProductDAO {
     private static final String SQL_FIND_BY_ID = "SELECT id, name, price, quantity FROM products WHERE id = ?";
     private static final String SQL_FIND_BY_NAME = "SELECT id, name, price, quantity FROM products WHERE name LIKE ?";
     private static final String SQL_UPDATE = "UPDATE products SET name = ?, price = ?, quantity = ? WHERE id = ?";
+    private static final String SQL_INSERT = "INSERt INTO products (name, price, quantity) VALUES (?, ?, ?)";
+    private static final String SQL_DELETE_BY_ID = "DELETE FROM products WHERE id = ?";
 
     // -----------------------------
     // フィールド
@@ -65,20 +67,50 @@ public class ProductDAO {
             e.printStackTrace();
         }
     }
-
+    
     // -----------------------------
-    // 商品追加メソッド
+    // 商品削除メソッド
     // -----------------------------
     
+    /**
+     * 指定された商品IDを指定するとの商品を削除する
+     * @param id 削除対象商品の商品ID
+     */
+	public void deleteById(int id) {
+		try (PreparedStatement pstmt = this.conn.prepareStatement(SQL_DELETE_BY_ID);) {
+			pstmt.setInt(1, id);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			Display.showMessageln("レコード削除時にエラーが発生しました。");
+		}
+	}
+    
+    // -----------------------------
+    // 商品追加/商品更新メソッド
+    // -----------------------------
+    
+    /**
+     * 商品の追加または更新を行う
+     * @param product 操作対象商品インスタンス
+     */
 	public void save(Product product) {
-		try (PreparedStatement pstmt = this.conn.prepareStatement(SQL_UPDATE);) {
+		boolean updated = isUpdated(product);
+		// 三項演算子については、多用すると可読性が落ちるがこの程度なら許容できる（catchブロック内の三項演算子も同様）
+		String sql = updated ? SQL_UPDATE : SQL_INSERT;
+		try (PreparedStatement pstmt = this.conn.prepareStatement(sql);) {
 			pstmt.setString(1, product.getName());
 			pstmt.setInt(2, product.getPrice());
 			pstmt.setInt(3, product.getQuantity());
-			pstmt.setInt(4, product.getId());
+			if (updated) {
+				// 更新の場合はWHERE句のプレースホルダを置換する必要がある
+				pstmt.setInt(4, product.getId());
+			}
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
-            Display.showMessageln("レコード挿入時にエラーが発生しました。");
+			String errorMessage = updated
+				? "レコード更新時にエラーが発生しました。"  // UPDATE文の場合
+				: "レコード挿入時にエラーが発生しました。"; // INSERT文の場合
+            Display.showMessageln(errorMessage);
 		}
 	}
     
@@ -202,6 +234,19 @@ public class ProductDAO {
         bean.setName(rs.getString("name"));
         bean.setPrice(rs.getInt("price"));
         bean.setQuantity(rs.getInt("quantity"));
+    }
+
+    /**
+     * 指定された商品インスタンスが更新用であるかどうかを判定する
+     * @param product 判定対象商品インスタンス
+     * @return 商品インスタンスのidフィールドが1以上の整数である場合はtrue、それ以外の場合はfalse
+     */
+    private boolean isUpdated(Product product) {
+    	if (product.getId() > 0) {
+    		return true;
+    	} else {
+    		return false;
+    	}
     }
 
 }
