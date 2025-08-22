@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,6 +37,83 @@ class ProductDaoTest {
 		ProductsTableHelper.tearDownTable();
 		// テスト対象クラスの解放
 		sut.close();
+	}
+	
+	@Nested
+	@DisplayName("ProductDAO#deleteByid(int)メソッドのテストクラス")
+	class DleteByIdTest {
+		@Test
+		@DisplayName("Test53: 登録されていない商品IDを指定すると削除されない")
+		void test53() {
+			// setup
+			int targetId = -1;
+			List<Product> expectedList = new ArrayList<Product>();
+			expectedList.add(new Product("ゴカコーラ", 160, 6));
+			expectedList.add(new Product("アグエリアス", 150, 10));
+			expectedList.add(new Product("こーいお茶", 120, 9));
+			expectedList.add(new Product("ボズ", 120, 0));
+			
+			// execute
+			sut.deleteById(targetId);
+			List<Product> actualList = sut.findAll();
+			
+			// verify
+			for (int i = 0; i < actualList.size(); i++) {
+				Product actual = actualList.get(i);
+				Product expected = expectedList.get(i);
+				assertEquals(expected.toStringCompare(), actual.toStringCompare());
+			}
+			
+		}
+		@Test
+		@DisplayName("Test52: 商品「オロナミンZ」と商品「こってり煮込んだお味噌汁」を追加したあとで商品「オロナミンZ」を削除できる")
+		void test52() {
+			// setup
+			Product[] targets = {new Product("オロナミンZ", 230, 40), new Product("こってり煮込んだお味噌汁", 270, 36)};
+			List<Product> expectedList = new ArrayList<Product>();
+			expectedList.add(new Product("ゴカコーラ", 160, 6));
+			expectedList.add(new Product("アグエリアス", 150, 10));
+			expectedList.add(new Product("こーいお茶", 120, 9));
+			expectedList.add(new Product("ボズ", 120, 0));
+			expectedList.add(targets[1]);
+			
+			// execute
+			for (Product target : targets) {
+				sut.save(target);
+			}
+			List<Product> target = sut.findByName("オロナミン");
+			sut.deleteById(target.get(0).getId());
+			List<Product> actualList = sut.findAll();
+			
+			// verify
+			for (int i = 0; i < actualList.size(); i++) {
+				Product actual = actualList.get(i);
+				Product expected = expectedList.get(i);
+				assertEquals(expected.toStringCompare(), actual.toStringCompare());
+			}
+			
+		}
+		
+		@Test
+		@DisplayName("Test51: 商品ID「3」の商品を削除できる")
+		void test51() {
+			// setup
+			int targetId = 3;
+			List<Product> expectedList = new ArrayList<Product>();
+			expectedList.add(new Product("ゴカコーラ", 160, 6));
+			expectedList.add(new Product("アグエリアス", 150, 10));
+			expectedList.add(new Product("ボズ", 120, 0));
+			// execute
+			sut.deleteById(targetId);
+			List<Product> actualList = sut.findAll();
+			// verify
+			for (int i = 0; i < actualList.size(); i++) {
+				Product actual = actualList.get(i);
+				Product expected = expectedList.get(i);
+				assertEquals(expected.toStringCompare(), actual.toStringCompare());
+			}
+			
+		}
 	}
 	
 	@Nested
@@ -104,9 +180,27 @@ class ProductDaoTest {
 		}
 		
 		@Test
-		@Disabled
 		@DisplayName("Test41:【レコード新規登録のテスト】")
 		void test41() {
+			// setup
+			Product target = new Product("こってり煮込んだお味噌汁", 140, 3);
+			List<Product> expectedList = new ArrayList<Product>();
+			expectedList.add(new Product("ゴカコーラ", 160, 6));
+			expectedList.add(new Product("アグエリアス", 150, 10));
+			expectedList.add(new Product("こーいお茶", 120, 9));
+			expectedList.add(new Product("ボズ", 120, 0));
+			expectedList.add(target);
+			
+			// execute
+			sut.save(target);
+			List<Product> actualList = sut.findAll();
+			
+			// verify
+			for (int i = 0; i < actualList.size(); i++) {
+				Product actual = actualList.get(i);
+				Product expected = expectedList.get(i);
+				assertEquals(expected.toStringCompare(), actual.toStringCompare());
+			}
 			
 		}
 	}
