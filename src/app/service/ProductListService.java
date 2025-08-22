@@ -34,6 +34,7 @@ public class ProductListService {
 								FixedLengthGenerator.execute(bean.getQuantity(), 3) 
 							);
 		}
+		System.out.println("");
 		
 	}
 	

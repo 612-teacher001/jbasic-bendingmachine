@@ -49,6 +49,7 @@ public class Menu {
 			break;
 		case INDEX_REGIST:
 			ProductRegistService productRegistService = new ProductRegistService();
+			productRegistService.execute();
 			isRunning = true;
 			break;
 		case INDEX_EDIT:
