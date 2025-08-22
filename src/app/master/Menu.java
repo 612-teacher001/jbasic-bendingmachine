@@ -59,6 +59,7 @@ public class Menu {
 			break;
 		case INDEX_DELETE:
 			ProductDeleteService productDeleteService = new ProductDeleteService();
+			productDeleteService.execute();
 			isRunning = true;
 			break;
 		default:
